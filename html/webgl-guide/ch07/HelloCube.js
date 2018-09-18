@@ -57,8 +57,8 @@ function main() {
 
   // Set the eye point and the viewing volume
   var mvpMatrix = new Matrix4();
-  mvpMatrix.setPerspective(30, 1, 1, 100);
-  mvpMatrix.lookAt(3, 3, 7, 0, 0, 0, 0, 1, 0);
+  mvpMatrix.setPerspective(60, 1, 1, 100);
+  mvpMatrix.lookAt(0, 0, 10, 0, 0, 0, 0, 1, 0);
 
   // Pass the model view projection matrix to u_MvpMatrix
   gl.uniformMatrix4fv(u_MvpMatrix, false, mvpMatrix.elements);

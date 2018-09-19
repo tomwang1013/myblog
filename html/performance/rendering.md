@@ -2,7 +2,11 @@
 typora-copy-images-to: ..\..\images
 ---
 
-# 浏览器渲染性能分析
+[TOC]
+
+
+
+# 浏览器渲染性能分析总结
 
 这篇文章的主要素材来源于google开发文档：https://developers.google.com/web/fundamentals/performance/rendering/，算是做一个总结再加上自己的一些理解，做一个备忘录
 
@@ -111,13 +115,136 @@ typora-copy-images-to: ..\..\images
 
 ## 减少样式计算的作用范围及复杂性
 
+这一节没啥好说的，一是使用简单的选择器，尽量使用class：
+
+```javascript
+// bad
+.box:nth-last-child(-n+1) .title {
+  /* styles */
+}
+
+// good
+.final-box-title {
+  /* styles */
+}
+```
+
+二是尽量减少需要重新计算样式的元素数量
+
 ## 避免复杂的布局计算以及布局的反复计算(下面简称布局抖动)
+
+- 尽量避免修改元素的布局
+
+  布局计算是重新计算元素的位置及大小，由于元素之间的排版关系紧密，布局计算的范围通常是整个文档：如果文档中的元素很多，这个过程需要花很长时间，所以第一原则是尽量避免修改元素的布局
+
+- 避免强制布局同步(forced synchronous layouts)
+
+  前面提到，一般而言，我们渲染一帧需要经过以下5步：
+
+  ![1537347171681](../../images/1537347171681.png)
+
+  layout只会计算一次，但是如果我们不注意的话，可能在javascript中就会发生layout计算，这种情况叫*强制布局计算*，也就是通常所说的**回流**。
+
+  关于布局，我们首先要认识的一件事就是在javascript中可以毫无代价地得到前一帧的布局信息，问题在于，如果你在获取之前改变了元素的样式，这个时候浏览器为了得到元素的最新的布局信息，必须先进行布局计算：
+
+  ```javascript
+  function logBoxHeight() {
+    // 改变元素样式
+    box.classList.add('super-big');
+  
+    // Gets the height of the box in pixels
+    // and logs it out - 回流产生
+    console.log(box.offsetHeight);
+  }
+  ```
+
+- 避免布局抖动(layout thrashing)
+
+  比回流更可怕的是反复回流，看下以下代码：
+
+  ```javascript
+  function resizeAllParagraphsToMatchBlockWidth() {
+    // Puts the browser into a read-write-read-write cycle.
+    for (var i = 0; i < paragraphs.length; i++) {
+      paragraphs[i].style.width = box.offsetWidth + 'px';
+    }
+  }
+  ```
+
+  每次循环中需要得到box的宽度，同时设置其他元素的宽度；在下一次循环时，由于有元素的样式发生了变化，所以为了得到box的新的宽度必须重新计算布局，导致每次循环都要进行回流，这对性能是影响很大的
 
 ## 简化绘制复杂性及减小绘制区域
 
+绘制一般是整个流程中最费时的一步，且除了`transform`和`opacity`属性外(下节会详细讲)，其他css属性的修改都会引起重绘。在重绘不可避免的情况下，可以考虑以下方法来减轻重绘的代价：
+
+- 将重绘的元素提升到新的层
+
+  前面提到过，浏览器是按层绘制的，绘制好所有层之后再把它们叠加合成生成最终的渲染结果。将重绘的元素提升到单独的层，这样就不会影响其他元素，提高渲染效率，这对那种移动的元素尤其有效。提升到独立的层的最有效的办法是使用`will-change`属性：
+
+  ```css
+  .moving-element {
+    will-change: transform;
+  }
+  ```
+
+  如果浏览器不支持这个属性，可以使用下面的规则：
+
+  ```css
+  .moving-element {
+    transform: translateZ(0);
+  }
+  ```
+
+  当然，太多的层也不好，加了之后需要处理验证
+
+- 减小绘制区域
+
+- 减小绘制复杂性
+
+  不用的css样式效果绘制效率不一样，比如说阴影绘制就比背景耗时，在效果相差不大时尽量考虑使用简单的css样式
+
 ## 坚持使用只影响合成的css属性(下面简称"合成相关")及合理使用渲染层
 
-## 考虑在事件处理中使用防抖动机制
+上一节提过，有两个属性的修改不会引起重绘，这2个属性就是 transform 和 opacity：
+
+![1537350905247](../../images/1537350905247.png)
+
+![1537351412290](../../images/1537351412290.png)
+
+所以在做动画时使用这2个属性是效率最高的：浏览器会把元素临时提升到独立层，不用绘制，直接合成。注意：如果需要将元素永久性地提升到独立层，需要使用上面提到的`will-change`或`transform`属性：
+
+![1537355072366](../../images/1537355072366.png)
+
+## 考虑在事件处理中使用防节流机制
+
+- 避免在事件处理中改变样式
+
+  事件处理是在`raf`之前执行的，如果你在事件处理中修改了样式，然后在raf中读取了样式，就可能导致前面提到的回流：
+
+  ![1537355384983](../../images/1537355384983.png)
+
+  所以始终应该在raf中修改样式
+
+- 事件节流
+
+  想scroll，size这种事件触发频率远远大于屏幕刷新频率的，在这种事件处理中做一些视觉变化操作是很浪费资源的，并可能导致界面卡死，解决办法还是一样：使用raf：
+
+  ```javascript
+  function onScroll (evt) {
+    // Store the scroll value for laterz.
+    lastScrollY = window.scrollY;
+  
+    // Prevent multiple rAF callbacks.
+    if (scheduledAnimationFrame)
+      return;
+  
+    scheduledAnimationFrame = true;
+    requestAnimationFrame(readAndUpdatePage);
+  }
+  
+  window.addEventListener('scroll', onScroll);
+  ```
+
 
 
 

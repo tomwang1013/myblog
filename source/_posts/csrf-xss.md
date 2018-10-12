@@ -48,12 +48,12 @@ tags:
 
    ```jsp
    <%
-       Statement stmt = conn.createStatement();
+    Statement stmt = conn.createStatement();
    	ResultSet rs = stmt.executeQuery("select * from emp where id=" + id);
    	if (rs != null) {
        	rs.next(); 
-      	 	String name = rs.getString("name");
-       }
+      	String name = rs.getString("name");
+    }
    %>
    
    Employee Name: <%= name %>
@@ -66,4 +66,3 @@ tags:
 ```
 <script>alert(1)</script> => &lt;script&gt;alert(1)&lt;/script&gt; // html entity encode
 ```
-

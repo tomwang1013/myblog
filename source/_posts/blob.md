@@ -124,6 +124,3 @@ function previewFile() {
   }
 }
 ```
-
-
-

@@ -3,12 +3,13 @@
 ## Source: https://github.com/hexojs/hexo/
 
 # Site
-title: 今歌爸爸的学习记录及生活点滴
-subtitle: 
+title: tomwang1013的博客
+subtitle: 今歌爸爸的学习记录及生活点滴
 description: web开发，前端技术总结
 keywords: front-end, web development
 author: wang xiantong
-language:
+email: 174604588@qq.com
+language: zh-CN
 timezone:
 
 # URL
@@ -73,7 +74,31 @@ pagination_dir: page
 # Extensions
 ## Plugins: https://hexo.io/plugins/
 ## Themes: https://hexo.io/themes/
-theme: landscape
+theme: indigo
+
+feed:
+  type: atom
+  path: atom.xml
+  limit: 0
+
+jsonContent:
+  meta: false
+  pages: false
+  posts:
+    title: true
+    date: true
+    path: true
+    text: true
+    raw: false
+    content: false
+    slug: false
+    updated: false
+    comments: false
+    link: false
+    permalink: false
+    excerpt: false
+    categories: false
+    tags: true
 
 # Deployment
 ## Docs: https://hexo.io/docs/deployment.html

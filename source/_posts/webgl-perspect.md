@@ -75,4 +75,3 @@ setPerspective(60, 1, 1, 100)
 ![1537258598407](../images/1537258598407.png)
 
 黑色背景即为整个canvas，通过手动测量，确实是77个像素，说明以上的推算过程是正确的，完整的示例在[这里](../webgl-guide/ch07/HelloCube.html)。
-

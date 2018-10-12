@@ -5,8 +5,6 @@ tags:
 - performance
 ---
 
-[TOC]
-
 这篇文章的主要素材来源于google开发文档：https://developers.google.com/web/fundamentals/performance/rendering/，算是做一个总结再加上自己的一些理解，做一个备忘录
 
 ## 概述
@@ -243,7 +241,3 @@ tags:
   
   window.addEventListener('scroll', onScroll);
   ```
-
-
-
-

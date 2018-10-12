@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+
+  
+  <title>CSRF和XSS扫盲 | 今歌爸爸的学习记录及生活点滴</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="关于CSRF和XSS的文章非常多，相信很多人也看过了，笔者也看了一些，但总是记不住，这个做个非常简单的总结，让大家有个直观的印象 CSRF全称：Cross-Site Request Forgery，以用户的名义发起一个恶意请求，简单过程如下：  用户登录正常网站A 用户同时不小心打开黑客的网站B 网站B自动或由用户触发发起一个恶意的指向A服务器的请求 A服务器处理这个恶意请求，坏事发生  这里有幅">
+<meta name="keywords" content="安全">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CSRF和XSS扫盲">
+<meta property="og:url" content="http://jinge.red/csrf-xss/index.html">
+<meta property="og:site_name" content="今歌爸爸的学习记录及生活点滴">
+<meta property="og:description" content="关于CSRF和XSS的文章非常多，相信很多人也看过了，笔者也看了一些，但总是记不住，这个做个非常简单的总结，让大家有个直观的印象 CSRF全称：Cross-Site Request Forgery，以用户的名义发起一个恶意请求，简单过程如下：  用户登录正常网站A 用户同时不小心打开黑客的网站B 网站B自动或由用户触发发起一个恶意的指向A服务器的请求 A服务器处理这个恶意请求，坏事发生  这里有幅">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://jinge.red/images/csrf.png">
+<meta property="og:updated_time" content="2018-10-12T05:01:12.172Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="CSRF和XSS扫盲">
+<meta name="twitter:description" content="关于CSRF和XSS的文章非常多，相信很多人也看过了，笔者也看了一些，但总是记不住，这个做个非常简单的总结，让大家有个直观的印象 CSRF全称：Cross-Site Request Forgery，以用户的名义发起一个恶意请求，简单过程如下：  用户登录正常网站A 用户同时不小心打开黑客的网站B 网站B自动或由用户触发发起一个恶意的指向A服务器的请求 A服务器处理这个恶意请求，坏事发生  这里有幅">
+<meta name="twitter:image" content="http://jinge.red/images/csrf.png">
+  
+    <link rel="alternate" href="/atom.xml" title="今歌爸爸的学习记录及生活点滴" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">今歌爸爸的学习记录及生活点滴</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://jinge.red"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-csrf-xss" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/csrf-xss/" class="article-date">
+  <time datetime="2018-09-02T04:49:24.000Z" itemprop="datePublished">2018-09-02</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      CSRF和XSS扫盲
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>关于CSRF和XSS的文章非常多，相信很多人也看过了，笔者也看了一些，但总是记不住，这个做个非常简单的总结，让大家有个直观的印象</p>
+<h2 id="CSRF"><a href="#CSRF" class="headerlink" title="CSRF"></a>CSRF</h2><p>全称：Cross-Site Request Forgery，以用户的名义发起一个恶意请求，简单过程如下：</p>
+<ol>
+<li>用户登录正常网站A</li>
+<li>用户同时不小心打开黑客的网站B</li>
+<li>网站B自动或由用户触发发起一个恶意的指向A服务器的请求</li>
+<li>A服务器处理这个恶意请求，坏事发生</li>
+</ol>
+<p>这里有幅网上找的图可以看出这个过程：</p>
+<p><img src="../images/csrf.png" alt="img"></p>
+<h3 id="如何避免？"><a href="#如何避免？" class="headerlink" title="如何避免？"></a>如何避免？</h3><p>避免的关键是如何区分甄别出恶意请求：目前比较好的一种做法是为每个请求带上一个随机的token，这个token是服务器端和浏览器端通过某种方式约定好的，服务器端通过检查这个token来验证请求的合法性，这个很多后端框架都做了支持。</p>
+<h2 id="XSS"><a href="#XSS" class="headerlink" title="XSS"></a>XSS</h2><p>全称：Cross-site Scripting，想方设法在用户浏览的网页上植入恶意脚本，既然是脚本，就可以做任何事：获取隐私(cookie等)、打开其他网站、修改页面内容等等</p>
+<p>怎么植入恶意脚本呢？举两个例子：</p>
+<ol>
+<li><p>下面是一段JSP脚本，将来自当前页面url中的一个参数展示在页面上：</p>
+<figure class="highlight jsp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&lt;% String eid = request.getParameter(<span class="string">"eid"</span>); %&gt; </span><br><span class="line">Employee ID: &lt;%= eid %&gt;</span><br></pre></td></tr></table></figure>
+<p>攻击者可以先准备一个url，在eid参数中存入恶意脚本：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://webpage.com/?eid=&lt;script&gt;alert(1)&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+<p>然后引诱用户点击这个url，引诱的方式很多，如email，SNS等。用户一点击，脚本执行</p>
+</li>
+<li><p>又是一段JSP脚本，在数据库中查找一个名称，然后展示出来：</p>
+<figure class="highlight jsp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&lt;%</span><br><span class="line">    Statement stmt = conn.createStatement();</span><br><span class="line">	ResultSet rs = stmt.executeQuery(<span class="string">"select * from emp where id="</span> + id);</span><br><span class="line">	<span class="keyword">if</span> (rs != <span class="keyword">null</span>) &#123;</span><br><span class="line">    	rs.next(); </span><br><span class="line">   	 	String name = rs.getString(<span class="string">"name"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">%&gt;</span><br><span class="line"></span><br><span class="line">Employee Name: &lt;%= name %&gt;</span><br></pre></td></tr></table></figure>
+<p>如果这个名称是用户输入的，且正常情况下其他用户可以通过浏览网页看到这个信息，那么攻击者可以输入一段恶意脚本作为名称，这个名称被存入数据库中，所有用户都可能看到，所以很多用户都会受到攻击</p>
+</li>
+</ol>
+<p>由此可以看到，XSS一般是外部输入直接展示在页面上导致的，所以解决的办法就是对外部输入进行严格的验证，必要时对输入内容进行转码，如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;script&gt;alert(1)&lt;/script&gt; =&gt; &amp;lt;script&amp;gt;alert(1)&amp;lt;/script&amp;gt; // html entity encode</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://jinge.red/csrf-xss/" data-id="cjn5lo78700047ovjn55w8bfb" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/安全/">安全</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/offline-cookbook/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          offline-cookbook总结
+        
+      </div>
+    </a>
+  
+  
+    <a href="/code-splitting/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">javascript优化之code splitting</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/es6/">es6</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/html5/">html5</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/javascript/">javascript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/performance/">performance</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/promise/">promise</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/pwa/">pwa</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/webgl/">webgl</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/webpack/">webpack</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/安全/">安全</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/es6/" style="font-size: 15px;">es6</a> <a href="/tags/html5/" style="font-size: 10px;">html5</a> <a href="/tags/javascript/" style="font-size: 10px;">javascript</a> <a href="/tags/performance/" style="font-size: 20px;">performance</a> <a href="/tags/promise/" style="font-size: 15px;">promise</a> <a href="/tags/pwa/" style="font-size: 10px;">pwa</a> <a href="/tags/webgl/" style="font-size: 10px;">webgl</a> <a href="/tags/webpack/" style="font-size: 15px;">webpack</a> <a href="/tags/安全/" style="font-size: 10px;">安全</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/offline-cookbook/">offline-cookbook总结</a>
+          </li>
+        
+          <li>
+            <a href="/csrf-xss/">CSRF和XSS扫盲</a>
+          </li>
+        
+          <li>
+            <a href="/code-splitting/">javascript优化之code splitting</a>
+          </li>
+        
+          <li>
+            <a href="/crp/">深入理解浏览器关键渲染路径(critical render path)及其优化</a>
+          </li>
+        
+          <li>
+            <a href="/rendering/">浏览器渲染性能分析总结</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 wang xiantong<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>

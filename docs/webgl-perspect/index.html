@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+
+  
+  <title>透视投影解析 - 从建模到像素（WebGL） | 今歌爸爸的学习记录及生活点滴</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="我们知道，在计算机图形学中物体从建模到展示在屏幕上需要经过大概下面几个坐标变换：  我们以一个立方体的绘制来说明这一过程 建模这一步很简单，我们的立方体中心位于坐标系原点，默认情况下，相机也摆放在坐标系原点，和立方体处于同一个坐标系中，且使用的是右手坐标系：  摆放相机立方体建好之后第二个问题就是从哪个方向来观察它，也就是相机的摆放。默认情况下相机位于原点，也就是立方体的中心，且是往Z轴的负方向进">
+<meta name="keywords" content="webgl">
+<meta property="og:type" content="article">
+<meta property="og:title" content="透视投影解析 - 从建模到像素（WebGL）">
+<meta property="og:url" content="http://jinge.red/webgl-perspect/index.html">
+<meta property="og:site_name" content="今歌爸爸的学习记录及生活点滴">
+<meta property="og:description" content="我们知道，在计算机图形学中物体从建模到展示在屏幕上需要经过大概下面几个坐标变换：  我们以一个立方体的绘制来说明这一过程 建模这一步很简单，我们的立方体中心位于坐标系原点，默认情况下，相机也摆放在坐标系原点，和立方体处于同一个坐标系中，且使用的是右手坐标系：  摆放相机立方体建好之后第二个问题就是从哪个方向来观察它，也就是相机的摆放。默认情况下相机位于原点，也就是立方体的中心，且是往Z轴的负方向进">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://jinge.red/images/steps.png">
+<meta property="og:image" content="http://jinge.red/images/default%20cube.png">
+<meta property="og:image" content="http://jinge.red/images/default-cube-2.png">
+<meta property="og:image" content="http://jinge.red/images/1537254455887.png">
+<meta property="og:image" content="http://jinge.red/images/1537255932260.png">
+<meta property="og:image" content="http://jinge.red/images/1537257435923.png">
+<meta property="og:image" content="http://jinge.red/images/1537258598407.png">
+<meta property="og:updated_time" content="2018-10-12T05:58:11.856Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="透视投影解析 - 从建模到像素（WebGL）">
+<meta name="twitter:description" content="我们知道，在计算机图形学中物体从建模到展示在屏幕上需要经过大概下面几个坐标变换：  我们以一个立方体的绘制来说明这一过程 建模这一步很简单，我们的立方体中心位于坐标系原点，默认情况下，相机也摆放在坐标系原点，和立方体处于同一个坐标系中，且使用的是右手坐标系：  摆放相机立方体建好之后第二个问题就是从哪个方向来观察它，也就是相机的摆放。默认情况下相机位于原点，也就是立方体的中心，且是往Z轴的负方向进">
+<meta name="twitter:image" content="http://jinge.red/images/steps.png">
+  
+    <link rel="alternate" href="/atom.xml" title="今歌爸爸的学习记录及生活点滴" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">今歌爸爸的学习记录及生活点滴</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://jinge.red"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-webgl-perspect" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/webgl-perspect/" class="article-date">
+  <time datetime="2018-07-25T04:49:24.000Z" itemprop="datePublished">2018-07-25</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      透视投影解析 - 从建模到像素（WebGL）
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>我们知道，在计算机图形学中物体从建模到展示在屏幕上需要经过大概下面几个坐标变换：</p>
+<p><img src="..\images\steps.png" alt="steps"></p>
+<p>我们以一个立方体的绘制来说明这一过程</p>
+<h2 id="建模"><a href="#建模" class="headerlink" title="建模"></a>建模</h2><p>这一步很简单，我们的立方体中心位于坐标系原点，默认情况下，相机也摆放在坐标系原点，和立方体处于同一个坐标系中，且使用的是右手坐标系：</p>
+<p><img src="..\images\default cube.png" alt="default cube"></p>
+<h2 id="摆放相机"><a href="#摆放相机" class="headerlink" title="摆放相机"></a>摆放相机</h2><p>立方体建好之后第二个问题就是从哪个方向来观察它，也就是相机的摆放。默认情况下相机位于原点，也就是立方体的中心，且是往Z轴的负方向进行观察，这个时候我们只能看到立方体的后面一面。为了便于观察，我们需要调整相机的位置。我们可以想象相机上面固定住xyz坐标轴，相机移动时，坐标轴也跟着移动。相机摆放完之后，我们要重新计算立方体在新的坐标系下的坐标，观察方向不变，还是沿着新的Z轴负方向：</p>
+<p><img src="../images/default-cube-2.png" alt="default-cube-2"></p>
+<p>已知原坐标系原点（O）、新坐标系原点（O’），及新坐标系y轴向量，就可以唯一确定这个变换，我们可以用一个函数调用表示：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 新原点：(nOx, nOy, nOz), y轴向量：(upx, upy, upz)</span></span><br><span class="line">lookAt(nOx, nOy, nOz, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, upx, upy, upz)</span><br></pre></td></tr></table></figure>
+<p>我们把<code>lookAt</code>确定的矩阵记为<code>Mv</code>,则立方体在新的相机坐标系下的坐标为：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">np = Mv * p</span><br></pre></td></tr></table></figure>
+<h2 id="投影并裁减"><a href="#投影并裁减" class="headerlink" title="投影并裁减"></a>投影并裁减</h2><p>为了清除地看到投影后的图形，我们考虑一种简单的投影情况：相机沿着原Z轴正方向移动10个单位：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lookAt(<span class="number">0</span>, <span class="number">0</span>, <span class="number">10</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">0</span>)</span><br></pre></td></tr></table></figure>
+<p><img src="../images/1537254455887.png" alt="1537254455887"></p>
+<p>我们以新的原点为聚焦点做透视投影，以上下裁减面夹角、近裁减面宽高比、近远裁减面距离指定透视投影参数：</p>
+<p><img src="../images/1537255932260.png" alt="1537255932260"></p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">setPerspective(<span class="number">60</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">100</span>)</span><br></pre></td></tr></table></figure>
+<p>大家想想，这个时候我们的立方体在哪里呢？移动相机之后，立方体的前面的z坐标应该变成1 - 10 = 9，而后面的z坐标是-1 - 10 = -11，下面我们就看看经过这个投影之后，立方体前面在近裁减面上的投影位置及大小，通过简单作图可以看到：</p>
+<p><img src="../images/1537257435923.png" alt="1537257435923"></p>
+<p>可以看出立方体前面的成像高度为<code>1/9</code>，而近裁减面的高度为<code>tan(30)</code>，即$\sqrt{3}/3$，所以成像高度与近裁减面的高度比为：$\sqrt{3}/9$。</p>
+<h2 id="输出到视口"><a href="#输出到视口" class="headerlink" title="输出到视口"></a>输出到视口</h2><p>到最后一步了，我们假设视口是一个<code>400x400</code>的窗口，在WebGL中，即一个canvas：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">canvas</span> <span class="attr">id</span>=<span class="string">"webgl"</span> <span class="attr">width</span>=<span class="string">"400"</span> <span class="attr">height</span>=<span class="string">"400"</span>&gt;</span></span><br><span class="line">  Please use a browser that supports "canvas"</span><br><span class="line"><span class="tag">&lt;/<span class="name">canvas</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>我们需要把近裁减面映射到这个canvas，按照前面的推算，我们可以得到立方体的前面最终渲染到这个canvas上的高度为$\sqrt{3}/9*400$，大概为77个像素，最终的渲染结果如下：</p>
+<p><img src="../images/1537258598407.png" alt="1537258598407"></p>
+<p>黑色背景即为整个canvas，通过手动测量，确实是77个像素，说明以上的推算过程是正确的，完整的示例在<a href="../webgl-guide/ch07/HelloCube.html">这里</a>。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://jinge.red/webgl-perspect/" data-id="cjn5lo78h000f7ovjl4m0gznw" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/webgl/">webgl</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/blob/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          Blob类型用法总结
+        
+      </div>
+    </a>
+  
+  
+    <a href="/promise/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">promise精髓</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/es6/">es6</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/html5/">html5</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/javascript/">javascript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/performance/">performance</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/promise/">promise</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/pwa/">pwa</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/webgl/">webgl</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/webpack/">webpack</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/安全/">安全</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/es6/" style="font-size: 15px;">es6</a> <a href="/tags/html5/" style="font-size: 10px;">html5</a> <a href="/tags/javascript/" style="font-size: 10px;">javascript</a> <a href="/tags/performance/" style="font-size: 20px;">performance</a> <a href="/tags/promise/" style="font-size: 15px;">promise</a> <a href="/tags/pwa/" style="font-size: 10px;">pwa</a> <a href="/tags/webgl/" style="font-size: 10px;">webgl</a> <a href="/tags/webpack/" style="font-size: 15px;">webpack</a> <a href="/tags/安全/" style="font-size: 10px;">安全</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/offline-cookbook/">offline-cookbook总结</a>
+          </li>
+        
+          <li>
+            <a href="/csrf-xss/">CSRF和XSS扫盲</a>
+          </li>
+        
+          <li>
+            <a href="/code-splitting/">javascript优化之code splitting</a>
+          </li>
+        
+          <li>
+            <a href="/crp/">深入理解浏览器关键渲染路径(critical render path)及其优化</a>
+          </li>
+        
+          <li>
+            <a href="/rendering/">浏览器渲染性能分析总结</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 wang xiantong<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+
+  
+  <title>Blob类型用法总结 | 今歌爸爸的学习记录及生活点滴</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Blob一般指的是二进制块Binary Large Object的简称，用来存储大块不透明的任何数据，如图片、视频、字符串等等。Blob作为一种js类型，只有下面很少的属性和方法：  属性 size：blob的字节大小 type：blob的MIME type  方法 slice：截取blob的一段返回一个新的blob，算是blob的一种创建方法   Blob的构建直接构建 Blob构造函数：var">
+<meta name="keywords" content="javascript,html5">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Blob类型用法总结">
+<meta property="og:url" content="http://jinge.red/blob/index.html">
+<meta property="og:site_name" content="今歌爸爸的学习记录及生活点滴">
+<meta property="og:description" content="Blob一般指的是二进制块Binary Large Object的简称，用来存储大块不透明的任何数据，如图片、视频、字符串等等。Blob作为一种js类型，只有下面很少的属性和方法：  属性 size：blob的字节大小 type：blob的MIME type  方法 slice：截取blob的一段返回一个新的blob，算是blob的一种创建方法   Blob的构建直接构建 Blob构造函数：var">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-10-12T05:00:10.444Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Blob类型用法总结">
+<meta name="twitter:description" content="Blob一般指的是二进制块Binary Large Object的简称，用来存储大块不透明的任何数据，如图片、视频、字符串等等。Blob作为一种js类型，只有下面很少的属性和方法：  属性 size：blob的字节大小 type：blob的MIME type  方法 slice：截取blob的一段返回一个新的blob，算是blob的一种创建方法   Blob的构建直接构建 Blob构造函数：var">
+  
+    <link rel="alternate" href="/atom.xml" title="今歌爸爸的学习记录及生活点滴" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">今歌爸爸的学习记录及生活点滴</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://jinge.red"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-blob" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/blob/" class="article-date">
+  <time datetime="2018-08-12T04:49:24.000Z" itemprop="datePublished">2018-08-12</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Blob类型用法总结
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>Blob一般指的是二进制块<code>Binary Large Object</code>的简称，用来存储大块不透明的任何数据，如图片、视频、字符串等等。<code>Blob</code>作为一种js类型，只有下面很少的属性和方法：</p>
+<ul>
+<li><p>属性</p>
+<p><code>size</code>：blob的字节大小</p>
+<p><code>type</code>：blob的<a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Complete_list_of_MIME_types" target="_blank" rel="noopener">MIME type</a></p>
+</li>
+<li><p>方法</p>
+<p><code>slice</code>：截取blob的一段返回一个新的blob，算是blob的一种创建方法</p>
+</li>
+</ul>
+<h2 id="Blob的构建"><a href="#Blob的构建" class="headerlink" title="Blob的构建"></a>Blob的构建</h2><h3 id="直接构建"><a href="#直接构建" class="headerlink" title="直接构建"></a>直接构建</h3><ul>
+<li><p>Blob构造函数：<code>var aBlob = new Blob( array[, options]);</code></p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> aBlob = <span class="keyword">new</span> Blob([<span class="string">'my name'</span>, <span class="keyword">new</span> <span class="built_in">Uint8Array</span>([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>])], &#123; <span class="attr">type</span>: <span class="string">'text/plain'</span> &#125;)</span><br><span class="line">aBlob.size <span class="comment">// 10</span></span><br><span class="line">aBlob.type <span class="comment">// 'text/plain'</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>通过BlobBuilder来构建(==已废弃，优先选择Blob构造函数==)</p>
+</li>
+</ul>
+<h3 id="间接构建"><a href="#间接构建" class="headerlink" title="间接构建"></a>间接构建</h3><ul>
+<li><p>从文件中读取：<code>&lt;input type=&quot;file&quot;&gt;</code></p>
+<p>用户选择文件之后<code>input.files</code>就是一个<code>FileList</code>，里面的元素是<code>File</code>，<code>File</code>是<code>Blob</code>的子类型，具有其他一些额外的属性，如name，lastModifiedDate等：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="undefined"></span></span><br><span class="line"><span class="javascript">    <span class="comment">// Log information about a list of selected files</span></span></span><br><span class="line"><span class="javascript">    <span class="function"><span class="keyword">function</span> <span class="title">fileinfo</span>(<span class="params">files</span>) </span>&#123;</span></span><br><span class="line"><span class="javascript">        <span class="keyword">for</span>(<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; files.length; i++) &#123; <span class="comment">// files is an array-like object</span></span></span><br><span class="line"><span class="javascript">            <span class="keyword">var</span> f = files[i];</span></span><br><span class="line"><span class="javascript">            <span class="built_in">console</span>.log(f.name, <span class="comment">// Name only: no path</span></span></span><br><span class="line"><span class="javascript">            f.size, f.type, <span class="comment">// size and type are Blob properties</span></span></span><br><span class="line"><span class="javascript">            f.lastModifiedDate); <span class="comment">// another File property</span></span></span><br><span class="line"><span class="undefined">        &#125;</span></span><br><span class="line"><span class="undefined">    &#125;</span></span><br><span class="line"><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">&lt;!-- Allow selection of multiple image files and pass them to fileinfo()--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"file"</span> <span class="attr">accept</span>=<span class="string">"image/*"</span> <span class="attr">multiple</span> <span class="attr">onchange</span>=<span class="string">"fileinfo(this.files)"</span>/&gt;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>从XHR下载</p>
+<p>可以通过ajax从服务器请求blob类型数据：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// GET the contents of the url as a Blob and pass it to the specified callback.</span></span><br><span class="line"><span class="comment">// This code is untested: no browsers supported this API when it was written.</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">getBlob</span>(<span class="params">url, callback</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> xhr = <span class="keyword">new</span> XMLHttpRequest(); <span class="comment">// Create new XHR object</span></span><br><span class="line">    xhr.open(<span class="string">"GET"</span>, url); <span class="comment">// Specify URL to fetch</span></span><br><span class="line">    xhr.responseType = <span class="string">"blob"</span> <span class="comment">// We'd like a Blob, please</span></span><br><span class="line">    xhr.onload = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123; <span class="comment">// onload is easier than onreadystatechange</span></span><br><span class="line">    	callback(xhr.response); <span class="comment">// Pass the blob to our callback</span></span><br><span class="line">    &#125; <span class="comment">// Note .response, not .responseText</span></span><br><span class="line">    xhr.send(<span class="literal">null</span>); <span class="comment">// Send the request now</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="Blob的使用"><a href="#Blob的使用" class="headerlink" title="Blob的使用"></a>Blob的使用</h2><p>得到一个blob后，该如何使用它呢？</p>
+<h3 id="直接发送给服务器端"><a href="#直接发送给服务器端" class="headerlink" title="直接发送给服务器端"></a>直接发送给服务器端</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> xhr = <span class="keyword">new</span> XMLHttpRequest();</span><br><span class="line">xhr.open(<span class="string">'POST'</span>, <span class="string">'/server'</span>, <span class="literal">true</span>);</span><br><span class="line">xhr.onload = <span class="function"><span class="keyword">function</span>(<span class="params">e</span>) </span>&#123; &#125;;</span><br><span class="line">xhr.send(blob);</span><br></pre></td></tr></table></figure>
+<h3 id="转化为URL来使用"><a href="#转化为URL来使用" class="headerlink" title="转化为URL来使用"></a>转化为URL来使用</h3><p>blob这个对象不能直接使用，可以转为为一个url，格式为：<code>blob:xxx</code>，使用这个url来引用这个blob。这个格式和<code>data:xxx</code>有点像，但是blob url没有包含任何编码信息，仅仅是作为一个唯一的key来引用这个blob；而data url则是编码后的数据本身。我们使用<code>URL.createObjectURL</code>来做转化，转化后的url可以用在一般的url可以使用的地方，如<code>img.src</code>：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> img = <span class="built_in">document</span>.createElement(<span class="string">"img"</span>); <span class="comment">// Create an &lt;img&gt; element</span></span><br><span class="line">img.src = URL.createObjectURL(file); <span class="comment">// Use Blob URL with &lt;img&gt;</span></span><br><span class="line">img.onload = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123; <span class="comment">// When it loads</span></span><br><span class="line">    <span class="keyword">this</span>.width = <span class="number">100</span>; <span class="comment">// adjust its size and</span></span><br><span class="line">    <span class="built_in">document</span>.body.appendChild(<span class="keyword">this</span>); <span class="comment">// insert into document.</span></span><br><span class="line">    URL.revokeBlobURL(<span class="keyword">this</span>.src); <span class="comment">// But don't leak memory!</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="使用FileReader读取blob的真实内容"><a href="#使用FileReader读取blob的真实内容" class="headerlink" title="使用FileReader读取blob的真实内容"></a>使用FileReader读取blob的真实内容</h3><p>上面提到的url只是一个blob的引用，并不是真实的内容，我们可以使用<code>FileReader</code>通过下面几个方法读取blob的真实内容：</p>
+<ul>
+<li><code>readAsArrayBuffer</code>：将blob读取为ArrayBuffer</li>
+<li><code>readAsDataURL</code>：将blob读取为data url(注意：不是blob url)</li>
+<li><code>readAsText</code>：将blob读取为字符串</li>
+</ul>
+<p>下面是一个读取图片预览的例子，通过<code>readAsDataURL</code>将图片转化为base64编码：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">previewFile</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> preview = <span class="built_in">document</span>.querySelector(<span class="string">'img'</span>);</span><br><span class="line">  <span class="keyword">var</span> file    = <span class="built_in">document</span>.querySelector(<span class="string">'input[type=file]'</span>).files[<span class="number">0</span>];</span><br><span class="line">  <span class="keyword">var</span> reader  = <span class="keyword">new</span> FileReader();</span><br><span class="line"></span><br><span class="line">  reader.addEventListener(<span class="string">"load"</span>, <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    preview.src = reader.result;</span><br><span class="line">  &#125;, <span class="literal">false</span>);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (file) &#123;</span><br><span class="line">    reader.readAsDataURL(file);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://jinge.red/blob/" data-id="cjn5lo77u00007ovjuxvi7xrz" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/html5/">html5</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/javascript/">javascript</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/tree-shaking/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          javascript优化之tree shaking
+        
+      </div>
+    </a>
+  
+  
+    <a href="/webgl-perspect/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">透视投影解析 - 从建模到像素（WebGL）</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/es6/">es6</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/html5/">html5</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/javascript/">javascript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/performance/">performance</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/promise/">promise</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/pwa/">pwa</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/webgl/">webgl</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/webpack/">webpack</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/安全/">安全</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/es6/" style="font-size: 15px;">es6</a> <a href="/tags/html5/" style="font-size: 10px;">html5</a> <a href="/tags/javascript/" style="font-size: 10px;">javascript</a> <a href="/tags/performance/" style="font-size: 20px;">performance</a> <a href="/tags/promise/" style="font-size: 15px;">promise</a> <a href="/tags/pwa/" style="font-size: 10px;">pwa</a> <a href="/tags/webgl/" style="font-size: 10px;">webgl</a> <a href="/tags/webpack/" style="font-size: 15px;">webpack</a> <a href="/tags/安全/" style="font-size: 10px;">安全</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/offline-cookbook/">offline-cookbook总结</a>
+          </li>
+        
+          <li>
+            <a href="/csrf-xss/">CSRF和XSS扫盲</a>
+          </li>
+        
+          <li>
+            <a href="/code-splitting/">javascript优化之code splitting</a>
+          </li>
+        
+          <li>
+            <a href="/crp/">深入理解浏览器关键渲染路径(critical render path)及其优化</a>
+          </li>
+        
+          <li>
+            <a href="/rendering/">浏览器渲染性能分析总结</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 wang xiantong<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>

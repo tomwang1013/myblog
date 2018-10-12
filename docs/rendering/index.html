@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+
+  
+  <title>浏览器渲染性能分析总结 | 今歌爸爸的学习记录及生活点滴</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="[TOC] 这篇文章的主要素材来源于google开发文档：https://developers.google.com/web/fundamentals/performance/rendering/，算是做一个总结再加上自己的一些理解，做一个备忘录 概述显示器是以一个固定速度刷新屏幕的，一般是每秒60帧，我们可以想象浏览器里面有一个保存当前浏览器内容的渲染缓存，有一个独立的线程每隔大约16.6ms从">
+<meta name="keywords" content="performance">
+<meta property="og:type" content="article">
+<meta property="og:title" content="浏览器渲染性能分析总结">
+<meta property="og:url" content="http://jinge.red/rendering/index.html">
+<meta property="og:site_name" content="今歌爸爸的学习记录及生活点滴">
+<meta property="og:description" content="[TOC] 这篇文章的主要素材来源于google开发文档：https://developers.google.com/web/fundamentals/performance/rendering/，算是做一个总结再加上自己的一些理解，做一个备忘录 概述显示器是以一个固定速度刷新屏幕的，一般是每秒60帧，我们可以想象浏览器里面有一个保存当前浏览器内容的渲染缓存，有一个独立的线程每隔大约16.6ms从">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://jinge.red/images/1537324920067.png">
+<meta property="og:image" content="http://jinge.red/images/1537326874563.png">
+<meta property="og:image" content="http://jinge.red/images/1537326942439.png">
+<meta property="og:image" content="http://jinge.red/images/1537335693692.png">
+<meta property="og:image" content="http://jinge.red/images/1537347171681.png">
+<meta property="og:image" content="http://jinge.red/images/1537350905247.png">
+<meta property="og:image" content="http://jinge.red/images/1537351412290.png">
+<meta property="og:image" content="http://jinge.red/images/1537355072366.png">
+<meta property="og:image" content="http://jinge.red/images/1537355384983.png">
+<meta property="og:updated_time" content="2018-10-12T05:18:17.528Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="浏览器渲染性能分析总结">
+<meta name="twitter:description" content="[TOC] 这篇文章的主要素材来源于google开发文档：https://developers.google.com/web/fundamentals/performance/rendering/，算是做一个总结再加上自己的一些理解，做一个备忘录 概述显示器是以一个固定速度刷新屏幕的，一般是每秒60帧，我们可以想象浏览器里面有一个保存当前浏览器内容的渲染缓存，有一个独立的线程每隔大约16.6ms从">
+<meta name="twitter:image" content="http://jinge.red/images/1537324920067.png">
+  
+    <link rel="alternate" href="/atom.xml" title="今歌爸爸的学习记录及生活点滴" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">今歌爸爸的学习记录及生活点滴</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://jinge.red"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-rendering" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/rendering/" class="article-date">
+  <time datetime="2018-08-22T04:49:24.000Z" itemprop="datePublished">2018-08-22</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      浏览器渲染性能分析总结
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>[TOC]</p>
+<p>这篇文章的主要素材来源于google开发文档：<a href="https://developers.google.com/web/fundamentals/performance/rendering/，算是做一个总结再加上自己的一些理解，做一个备忘录" target="_blank" rel="noopener">https://developers.google.com/web/fundamentals/performance/rendering/，算是做一个总结再加上自己的一些理解，做一个备忘录</a></p>
+<h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>显示器是以一个固定速度刷新屏幕的，一般是每秒60帧，我们可以想象浏览器里面有一个保存当前浏览器内容的渲染缓存，有一个独立的线程每隔大约16.6ms从这个缓存中把浏览器内容刷新到屏幕上，而浏览器的渲染便是刷新这个缓存。</p>
+<p>浏览器绘制一帧主要需要经过下面5步：</p>
+<p><img src="../images/1537324920067.png" alt="1537324920067"></p>
+<ul>
+<li><p>javascript</p>
+<p>在javascript中可以做一些引起视觉变化的动作，如修改样式、操作dom等</p>
+</li>
+<li><p>style</p>
+<p>这一步主要是根据选择器重新计算元素的最终的css样式，看哪些元素的样式发生了变化</p>
+</li>
+<li><p>layout</p>
+<p>这个阶段计算元素几何布局的变化，如位置、大小等。值的注意的是，一个元素layout的变化可能会导致其他元素的连锁变化</p>
+</li>
+<li><p>paint</p>
+<p>这一步就是绘制了：根据元素的位置、大小、样式进行绘制。一般来说，浏览器是分层(layer)绘制的，不同的元素可能被绘制到不同的层上</p>
+</li>
+<li><p>composite</p>
+<p>这一步把绘制好的层根据层级关系(如z-index)组装起来</p>
+</li>
+</ul>
+<p>不是每次重绘(update rendering)都会经过这完整的5步，这又分三种情况：</p>
+<ul>
+<li><p>修改layout相关属性，如width，这种情况下需要经过完整的步骤</p>
+</li>
+<li><p>修改的属性和layout无关，如边框颜色，这种情况下不需要重新计算layout，只需要重绘</p>
+<p><img src="../images/1537326874563.png" alt="1537326874563"></p>
+</li>
+<li><p>有些属性的修改甚至都不需要重绘，直接组装即可</p>
+<p><img src="../images/1537326942439.png" alt="1537326942439"></p>
+<p>所以做视觉变化时我们应该优先使用这种属性</p>
+</li>
+</ul>
+<p>下面我们依次分析每一步在性能优化时该注意哪些东西</p>
+<h2 id="优化javascript的执行"><a href="#优化javascript的执行" class="headerlink" title="优化javascript的执行"></a>优化javascript的执行</h2><h3 id="避免js执行时间太长"><a href="#避免js执行时间太长" class="headerlink" title="避免js执行时间太长"></a>避免js执行时间太长</h3><p>提到js渲染优化，大家都知道一点，就是不要让js执行时间过长以免卡住主线程使得页面不能及时渲染更新，因为上面说的那几步都是在主线程中进行的。这个问题除了优化自身代码外有2种解决办法：</p>
+<ul>
+<li><p>web worker</p>
+<p>比如你要做一个很费时的排序，可以扔给web worker去做，排好序了再返回：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> dataSortWorker = <span class="keyword">new</span> Worker(<span class="string">"sort-worker.js"</span>);</span><br><span class="line">dataSortWorker.postMesssage(dataToSort);</span><br><span class="line"></span><br><span class="line"><span class="comment">// The main thread is now free to continue working on other things...</span></span><br><span class="line"></span><br><span class="line">dataSortWorker.addEventListener(<span class="string">'message'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">evt</span>) </span>&#123;</span><br><span class="line">   <span class="keyword">var</span> sortedData = evt.data;</span><br><span class="line">   <span class="comment">// Update data on screen...</span></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>任务分解</p>
+<p>如果你的任务实在是要在主线程中做(如需要操作dom)，那么可以把任务分解成很多小步，把每一小步放到<code>requestAnimationRequest</code>(简称<strong>raf</strong>，后面会讲到)中进行，这样就不会阻塞页面的响应与渲染，示例如下：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> taskList = breakBigTaskIntoMicroTasks(monsterTaskList);</span><br><span class="line">requestAnimationFrame(processTaskList);</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">processTaskList</span>(<span class="params">taskStartTime</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> taskFinishTime;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">do</span> &#123;</span><br><span class="line">    <span class="comment">// Assume the next task is pushed onto a stack.</span></span><br><span class="line">    <span class="keyword">var</span> nextTask = taskList.pop();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Process nextTask.</span></span><br><span class="line">    processTask(nextTask);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Go again if there’s enough time to do the next task.</span></span><br><span class="line">    taskFinishTime = <span class="built_in">window</span>.performance.now();</span><br><span class="line">  &#125; <span class="keyword">while</span> (taskFinishTime - taskStartTime &lt; <span class="number">3</span>);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (taskList.length &gt; <span class="number">0</span>)</span><br><span class="line">    requestAnimationFrame(processTaskList);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="用requestAnimationRequest来做视觉变化"><a href="#用requestAnimationRequest来做视觉变化" class="headerlink" title="用requestAnimationRequest来做视觉变化"></a>用requestAnimationRequest来做视觉变化</h3><p>前面提到了<code>raf</code>，这里我们正式介绍一下。简单地说，raf中注册的callback会在每一帧绘制开始的时候被调用。这里的<em>每一帧开始</em>可以理解为我们刚开始提到的屏幕以60帧每秒刷新的每一帧的开始，也是上一帧的结束点。就是说，从这个开始点开始，过大约16.6ms，屏幕会再次刷新。所以，你在raf中做的视觉变化(如样式修改，dom操作等)会在下一帧中得到展示(当然这些变化需要在16.6ms之内被浏览器更新)。</p>
+<p>在raf出来之前，我们做视觉修改的时机和屏幕刷新时机是完全独立的，这会导致丢帧的情况，就是我我们的修改不会在下一帧显示出来，而是下下帧才显示出来，比如你用<code>setTimeout</code>在某个时间点做了修改，可能就会出现这种情形：</p>
+<p><img src="../images/1537335693692.png" alt="1537335693692"></p>
+<p>如果我们能把js中的视觉修改提前到当前帧的开始处，那就能在下一帧得到展示，而唯一能达到这个目的的做法就是使用raf</p>
+<h2 id="减少样式计算的作用范围及复杂性"><a href="#减少样式计算的作用范围及复杂性" class="headerlink" title="减少样式计算的作用范围及复杂性"></a>减少样式计算的作用范围及复杂性</h2><p>这一节没啥好说的，一是使用简单的选择器，尽量使用class：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// bad</span></span><br><span class="line">.box:nth-last-child(-n+<span class="number">1</span>) .title &#123;</span><br><span class="line">  <span class="comment">/* styles */</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// good</span></span><br><span class="line">.final-box-title &#123;</span><br><span class="line">  <span class="comment">/* styles */</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>二是尽量减少需要重新计算样式的元素数量</p>
+<h2 id="避免复杂的布局计算以及布局的反复计算-下面简称布局抖动"><a href="#避免复杂的布局计算以及布局的反复计算-下面简称布局抖动" class="headerlink" title="避免复杂的布局计算以及布局的反复计算(下面简称布局抖动)"></a>避免复杂的布局计算以及布局的反复计算(下面简称布局抖动)</h2><ul>
+<li><p>尽量避免修改元素的布局</p>
+<p>布局计算是重新计算元素的位置及大小，由于元素之间的排版关系紧密，布局计算的范围通常是整个文档：如果文档中的元素很多，这个过程需要花很长时间，所以第一原则是尽量避免修改元素的布局</p>
+</li>
+<li><p>避免强制布局同步(forced synchronous layouts)</p>
+<p>前面提到，一般而言，我们渲染一帧需要经过以下5步：</p>
+<p><img src="../images/1537347171681.png" alt="1537347171681"></p>
+<p>layout只会计算一次，但是如果我们不注意的话，可能在javascript中就会发生layout计算，这种情况叫<em>强制布局计算</em>，也就是通常所说的<strong>回流</strong>。</p>
+<p>关于布局，我们首先要认识的一件事就是在javascript中可以毫无代价地得到前一帧的布局信息，问题在于，如果你在获取之前改变了元素的样式，这个时候浏览器为了得到元素的最新的布局信息，必须先进行布局计算：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">logBoxHeight</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="comment">// 改变元素样式</span></span><br><span class="line">  box.classList.add(<span class="string">'super-big'</span>);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Gets the height of the box in pixels</span></span><br><span class="line">  <span class="comment">// and logs it out - 回流产生</span></span><br><span class="line">  <span class="built_in">console</span>.log(box.offsetHeight);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>避免布局抖动(layout thrashing)</p>
+<p>比回流更可怕的是反复回流，看下以下代码：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">resizeAllParagraphsToMatchBlockWidth</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="comment">// Puts the browser into a read-write-read-write cycle.</span></span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; paragraphs.length; i++) &#123;</span><br><span class="line">    paragraphs[i].style.width = box.offsetWidth + <span class="string">'px'</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>每次循环中需要得到box的宽度，同时设置其他元素的宽度；在下一次循环时，由于有元素的样式发生了变化，所以为了得到box的新的宽度必须重新计算布局，导致每次循环都要进行回流，这对性能是影响很大的</p>
+</li>
+</ul>
+<h2 id="简化绘制复杂性及减小绘制区域"><a href="#简化绘制复杂性及减小绘制区域" class="headerlink" title="简化绘制复杂性及减小绘制区域"></a>简化绘制复杂性及减小绘制区域</h2><p>绘制一般是整个流程中最费时的一步，且除了<code>transform</code>和<code>opacity</code>属性外(下节会详细讲)，其他css属性的修改都会引起重绘。在重绘不可避免的情况下，可以考虑以下方法来减轻重绘的代价：</p>
+<ul>
+<li><p>将重绘的元素提升到新的层</p>
+<p>前面提到过，浏览器是按层绘制的，绘制好所有层之后再把它们叠加合成生成最终的渲染结果。将重绘的元素提升到单独的层，这样就不会影响其他元素，提高渲染效率，这对那种移动的元素尤其有效。提升到独立的层的最有效的办法是使用<code>will-change</code>属性：</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-class">.moving-element</span> &#123;</span><br><span class="line">  <span class="attribute">will-change</span>: transform;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果浏览器不支持这个属性，可以使用下面的规则：</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-class">.moving-element</span> &#123;</span><br><span class="line">  <span class="attribute">transform</span>: <span class="built_in">translateZ</span>(0);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>当然，太多的层也不好，加了之后需要处理验证</p>
+</li>
+<li><p>减小绘制区域</p>
+</li>
+<li><p>减小绘制复杂性</p>
+<p>不用的css样式效果绘制效率不一样，比如说阴影绘制就比背景耗时，在效果相差不大时尽量考虑使用简单的css样式</p>
+</li>
+</ul>
+<h2 id="坚持使用只影响合成的css属性-下面简称”合成相关”-及合理使用渲染层"><a href="#坚持使用只影响合成的css属性-下面简称”合成相关”-及合理使用渲染层" class="headerlink" title="坚持使用只影响合成的css属性(下面简称”合成相关”)及合理使用渲染层"></a>坚持使用只影响合成的css属性(下面简称”合成相关”)及合理使用渲染层</h2><p>上一节提过，有两个属性的修改不会引起重绘，这2个属性就是 transform 和 opacity：</p>
+<p><img src="../images/1537350905247.png" alt="1537350905247"></p>
+<p><img src="../images/1537351412290.png" alt="1537351412290"></p>
+<p>所以在做动画时使用这2个属性是效率最高的：浏览器会把元素临时提升到独立层，不用绘制，直接合成。注意：如果需要将元素永久性地提升到独立层，需要使用上面提到的<code>will-change</code>或<code>transform</code>属性：</p>
+<p><img src="../images/1537355072366.png" alt="1537355072366"></p>
+<h2 id="考虑在事件处理中使用防节流机制"><a href="#考虑在事件处理中使用防节流机制" class="headerlink" title="考虑在事件处理中使用防节流机制"></a>考虑在事件处理中使用防节流机制</h2><ul>
+<li><p>避免在事件处理中改变样式</p>
+<p>事件处理是在<code>raf</code>之前执行的，如果你在事件处理中修改了样式，然后在raf中读取了样式，就可能导致前面提到的回流：</p>
+<p><img src="../images/1537355384983.png" alt="1537355384983"></p>
+<p>所以始终应该在raf中修改样式</p>
+</li>
+<li><p>事件节流</p>
+<p>想scroll，size这种事件触发频率远远大于屏幕刷新频率的，在这种事件处理中做一些视觉变化操作是很浪费资源的，并可能导致界面卡死，解决办法还是一样：使用raf：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">onScroll</span> (<span class="params">evt</span>) </span>&#123;</span><br><span class="line">  <span class="comment">// Store the scroll value for laterz.</span></span><br><span class="line">  lastScrollY = <span class="built_in">window</span>.scrollY;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Prevent multiple rAF callbacks.</span></span><br><span class="line">  <span class="keyword">if</span> (scheduledAnimationFrame)</span><br><span class="line">    <span class="keyword">return</span>;</span><br><span class="line"></span><br><span class="line">  scheduledAnimationFrame = <span class="literal">true</span>;</span><br><span class="line">  requestAnimationFrame(readAndUpdatePage);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="built_in">window</span>.addEventListener(<span class="string">'scroll'</span>, onScroll);</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://jinge.red/rendering/" data-id="cjn5lo78b00087ovjlps0z2ry" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/performance/">performance</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/crp/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          深入理解浏览器关键渲染路径(critical render path)及其优化
+        
+      </div>
+    </a>
+  
+  
+    <a href="/tree-shaking/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">javascript优化之tree shaking</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/es6/">es6</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/html5/">html5</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/javascript/">javascript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/performance/">performance</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/promise/">promise</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/pwa/">pwa</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/webgl/">webgl</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/webpack/">webpack</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/安全/">安全</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/es6/" style="font-size: 15px;">es6</a> <a href="/tags/html5/" style="font-size: 10px;">html5</a> <a href="/tags/javascript/" style="font-size: 10px;">javascript</a> <a href="/tags/performance/" style="font-size: 20px;">performance</a> <a href="/tags/promise/" style="font-size: 15px;">promise</a> <a href="/tags/pwa/" style="font-size: 10px;">pwa</a> <a href="/tags/webgl/" style="font-size: 10px;">webgl</a> <a href="/tags/webpack/" style="font-size: 15px;">webpack</a> <a href="/tags/安全/" style="font-size: 10px;">安全</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/offline-cookbook/">offline-cookbook总结</a>
+          </li>
+        
+          <li>
+            <a href="/csrf-xss/">CSRF和XSS扫盲</a>
+          </li>
+        
+          <li>
+            <a href="/code-splitting/">javascript优化之code splitting</a>
+          </li>
+        
+          <li>
+            <a href="/crp/">深入理解浏览器关键渲染路径(critical render path)及其优化</a>
+          </li>
+        
+          <li>
+            <a href="/rendering/">浏览器渲染性能分析总结</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 wang xiantong<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>

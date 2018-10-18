@@ -1,6 +1,8 @@
 ---
 title: 深入理解浏览器关键渲染路径(critical render path)及其优化
 date: 2018-08-22 12:49:24
+categories:
+- programming
 tags: 
 - performance
 ---

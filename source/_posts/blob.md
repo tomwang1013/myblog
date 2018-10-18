@@ -1,6 +1,8 @@
 ---
 title: Blob类型用法总结
 date: 2018-08-12 12:49:24
+categories:
+- programming
 tags: 
 - javascript
 - html5

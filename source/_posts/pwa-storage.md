@@ -1,6 +1,8 @@
 ---
 title: PWA之存储简介
 date: 2018-10-12 21:20:44
+categories:
+- programming
 tags:
   - pwa
   - storage

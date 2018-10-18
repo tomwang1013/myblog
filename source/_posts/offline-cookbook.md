@@ -1,6 +1,8 @@
 ---
 title: offline-cookbook总结
 date: 2018-10-12 12:49:24
+categories:
+- programming
 tags: 
 - pwa
 ---

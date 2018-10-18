@@ -1,6 +1,8 @@
 ---
 title: Promise.race一种变形：any resolve => resolve, all reject => reject实现
 date: 2018-5-12 12:49:24
+categories:
+- programming
 tags: 
 - es6
 - promise

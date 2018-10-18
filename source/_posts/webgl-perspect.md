@@ -1,6 +1,8 @@
 ---
 title: 透视投影解析 - 从建模到像素（WebGL）
 date: 2018-07-25 12:49:24
+categories:
+- programming
 tags: 
 - webgl
 ---

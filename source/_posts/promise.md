@@ -1,6 +1,8 @@
 ---
 title: promise精髓
 date: 2018-07-12 12:49:24
+categories:
+- programming
 tags: 
 - es6
 - promise

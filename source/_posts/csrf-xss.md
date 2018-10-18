@@ -1,6 +1,8 @@
 ---
 title: CSRF和XSS扫盲
 date: 2018-09-02 12:49:24
+categories:
+- programming
 tags: 
 - 安全
 ---

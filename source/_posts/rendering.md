@@ -1,6 +1,8 @@
 ---
 title: 浏览器渲染性能分析总结
 date: 2018-08-22 12:49:24
+categories:
+- programming
 tags: 
 - performance
 ---

@@ -1,6 +1,8 @@
 ---
 title: javascript优化之code splitting
 date: 2018-08-22 12:49:24
+categories:
+- programming
 tags: 
 - performance
 - webpack

@@ -22,8 +22,13 @@ tags:
 ![img](../images/csrf.png)
 
 ### 如何避免？
+1. 让服务器只接受POST请求是无法避免的，普通的form提交同样可以发起cross-domain请求
+2. 严格限制[CORS](http://performantcode.com/web/do-you-really-know-cors), 千万不要出现
+    ```
+    Access-Control-Allow-Origin: *
+    ```
 
-避免的关键是如何区分甄别出恶意请求：目前比较好的一种做法是为每个请求带上一个随机的token，这个token是服务器端和浏览器端通过某种方式约定好的，服务器端通过检查这个token来验证请求的合法性，这个很多后端框架都做了支持。
+3. 避免的关键是如何区分甄别出恶意请求：目前比较好的一种做法是为每个请求带上一个随机的token，这个token是服务器端和浏览器端通过某种方式约定好的，服务器端通过检查这个token来验证请求的合法性，这个很多后端框架都做了支持。
 
 ## XSS
 
@@ -65,6 +70,7 @@ tags:
 
 由此可以看到，XSS一般是外部输入直接展示在页面上导致的，所以解决的办法就是对外部输入进行严格的验证，必要时对输入内容进行转码，如：
 
-```
-<script>alert(1)</script> => &lt;script&gt;alert(1)&lt;/script&gt; // html entity encode
+```html
+<!-- html entity encode -->
+<script>alert(1)</script> => &lt;script&gt;alert(1)&lt;/script&gt; 
 ```

@@ -103,6 +103,12 @@ jsonContent:
 # Deployment
 ## Docs: https://hexo.io/docs/deployment.html
 deploy:
-  type: git
+- type: git
   repo: git@github.com:tomwang1013/tomwang1013.github.io.git
   branch: master
+- type: ftpsync
+  host: 123.56.231.82
+  user: byu3639310001
+  pass: Mengxiang51#
+  remote: /htdocs
+  ignore: ["logreport"]

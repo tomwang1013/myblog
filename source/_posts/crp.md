@@ -126,7 +126,7 @@ img { float: right }
 </html>
 ```
 
-- [sync js(默认行为)](../labs/crp-test-sync.html)：
+- [sync js(默认行为)](../labs/crp/crp-test-sync.html)：
 
   ![1537520189100](../images/1537520189100.png)
 
@@ -136,7 +136,7 @@ img { float: right }
 
   DCL(蓝线)也在js之后触发
 
-- [defer js](../labs/crp-test-defer.html)
+- [defer js](../labs/crp/crp-test-defer.html)
 
   ![1537520878367](../images/1537520878367.png)
 
@@ -144,7 +144,7 @@ img { float: right }
 
   ![1537520964513](../images/1537520964513.png)
 
-- [async js](../labs/crp-test-async.html)
+- [async js](../labs/crp/crp-test-async.html)
 
   ![1537520994931](../images/1537520994931.png)
 

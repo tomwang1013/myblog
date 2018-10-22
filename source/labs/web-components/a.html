@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>style shadow dom</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+  <style>
+    div {
+      padding: 10px;
+      background: yellowgreen;
+      font-size: 25px;
+      color: blue;
+    }
+  </style>
+  
+  <div>
+    <p>I'm outside the element (big/white)</p>
+    <my-element><span>Light DOM content is also affected.</span></my-element>
+    <p>I'm outside the element (big/white)</p>
+  </div>
+  
+  <script>
+    const el = document.querySelector('my-element');
+    el.attachShadow({ mode: 'open' }).innerHTML = `
+    <style>
+      :host {
+        background: initial; /* 1st rule so subsequent properties are reset. */
+        display: block;
+        background: white;
+      }
+
+      ::slotted(span) {
+        font-style: italic;       
+      }
+    </style>
+    <p>my-element: all CSS properties are reset to their initial value using <code>all: initial</code>.</p>
+    <slot></slot>
+  `;
+  </script>
+</body>
+</html>

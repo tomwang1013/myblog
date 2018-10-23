@@ -2,6 +2,15 @@ export class HTMLClockElement extends HTMLElement {
   constructor() {
     super();
     // this.innerHTML = 'i am a clock custom element'
+    const shadowRoot = this.attachShadow({ mode: 'open' });
+    shadowRoot.innerHTML = `
+      <style>
+        ...
+      </style>
+      <p>from clock's shadow dom</p>
+      <slot></slot>
+    `;
+
     console.log('custom element created')
   }
 

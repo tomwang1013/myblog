@@ -1,6 +1,7 @@
 export class HTMLClockElement extends HTMLElement {
   constructor() {
     super();
+    // this.innerHTML = 'i am a clock custom element'
     console.log('custom element created')
   }
 

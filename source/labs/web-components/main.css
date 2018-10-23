@@ -1,0 +1,13 @@
+x-clock {
+  display: block;
+  width: 100px;
+  height: 100px;
+  height: 40px;
+  margin-top: 10px;
+  color: red;
+  border: 1px solid blue;
+}
+
+x-clock:not(:defined) {
+  opacity: 0;
+}

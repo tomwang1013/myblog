@@ -129,11 +129,11 @@ p
 
 `resolve promise with normal value or another promise`状态示意图：
 
-![1538211823168](../../images/1538211823168.png)
+![](../images/1538211823168.png)
 
-###resolve q from `onRejected`
+### resolve q from `onRejected`
 
-从`onRejected`中返回的值一样可以用来resolve(==不是reject==) q：
+从`onRejected`中返回的值一样可以用来resolve(*不是reject*) q：
 
 ```javascript
 p

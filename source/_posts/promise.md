@@ -275,7 +275,7 @@ Promise.prototype.finally = function (callback) {
 
 ## async & await
 
-async & await本质上是promise的语法糖，掌握了promise基本知道它们的用法了：
+async & await本质上是promise的语法糖，掌握了promise基本知道它们的用法了，这个需要注意的是**async函数始终返回一个promise**：
 
 ```javascript
 async function asyncFunc() {
@@ -381,6 +381,7 @@ function asyncFunc() {
 ```javascript
 async function asyncFunc() {
     try {
+        // 当otherAsyncFunc reject时await语句会抛出异常
         await otherAsyncFunc();
     } catch (err) {
         console.error(err);
@@ -396,3 +397,20 @@ function asyncFunc() {
     });
 }
 ```
+
+注意：一个async函数asyncFunc有下面4种调用方法：
+
+- asyncFunc()
+- await asyncFunc()
+- return asyncFunc()
+- return await asyncFunc()
+
+它们的意义各不相同，参考下面的博文
+
+参考：
+
+http://exploringjs.com/es6/ch_promises.html
+
+http://exploringjs.com/es2016-es2017/ch_async-functions.html
+
+https://jakearchibald.com/2017/await-vs-return-vs-return-await/

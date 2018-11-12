@@ -65,7 +65,9 @@ updateComponent = () => {
 vm.$createElement = (a, b, c, d) => createElement(vm, a, b, c, d, true)
 ```
 
-所以`createElement`这个函数必须返回一个vnode：
+App就是import `App.vue`得到的一个表示组件的对象
+
+`createElement`这个函数返回一个vnode：
 
 ```javascript
 // src/core/vdom/create-element.js
@@ -244,7 +246,7 @@ constructor (
 
 可以看到，构造函数保存在`componentOptions`中，并且tag值是类似vue-component-1-app这种字符串。
 
-看到这里大家可能有点疑问，我们知道一个vm有一个vnode和它对应，代表vm的dom结构的描述，而我们这里显然还没有得到App这个组件的实例，那这里的vnode(h(App)的返回值)和哪个vm对应的呢？答案是它不和任何vm对应，这种vnode在源码中被称为**placeholder vnode**，它们的存在是为了创建组件的实例，毕竟创建实例的构造函数被保存在这里。其实不光是构造函数，由它创建出来的vm实例也被保存了起来：`vnode.componentInstance`
+这样，root实例的vnode就得到了
 
 ## _update
 
@@ -311,7 +313,7 @@ export function createPatchFunction (backend) {
 vm.$el = vm.__patch__(vm.$el, vnode, hydrating, false /* removeOnly */)
 ```
 
-在渲染之前`vm.$el`的值是html中div#app元素($mount('#app'))，`vnode`当前_vnode，hydrating只有在SSR时才是true，其他情况都是false，以这些参数，我们看看patch函数是如何执行的，为简单起见，我们只保留这个例子要执行的代码路径：
+在渲染之前`vm.$el`的值是html中div#app元素(`$mount('#app')`)，`vnode`是当前_vnode，hydrating只有在SSR时才是true，其他情况都是false，以这些参数，我们看看patch函数是如何执行的，为简单起见，我们只保留这个例子要执行的代码路径：
 
 ```javascript
 	// src/core/vdom/patch.js	

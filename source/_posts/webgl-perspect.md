@@ -17,7 +17,7 @@ tags:
 
 这一步很简单，我们的立方体中心位于坐标系原点，默认情况下，相机也摆放在坐标系原点，和立方体处于同一个坐标系中，且使用的是右手坐标系：
 
-![default cube](..\images\default cube.png)
+![default cube](..\images\default-cube.png)
 
 ## 摆放相机
 

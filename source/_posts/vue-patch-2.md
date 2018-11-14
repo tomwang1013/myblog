@@ -1,5 +1,5 @@
 ---
-title: vue patch算法解读之一：自定义组件的实例化及首次渲染
+title: vue patch算法解读之二：自定义组件的实例化及首次渲染
 categories:
   - programming
 date: 2018-11-12 09:08:46

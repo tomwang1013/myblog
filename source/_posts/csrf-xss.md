@@ -23,12 +23,15 @@ tags:
 
 ### 如何避免？
 1. 让服务器只接受POST请求是无法避免的，普通的form提交同样可以发起cross-domain请求
+
 2. 严格限制[CORS](http://performantcode.com/web/do-you-really-know-cors), 千万不要出现
     ```
     Access-Control-Allow-Origin: *
     ```
 
 3. 避免的关键是如何区分甄别出恶意请求：目前比较好的一种做法是为每个请求带上一个随机的token，这个token是服务器端和浏览器端通过某种方式约定好的，服务器端通过检查这个token来验证请求的合法性，这个很多后端框架都做了支持。
+
+4. 最新新的cookie规范添加了一个[SameSite](https://www.netsparker.com/blog/web-security/same-site-cookie-attribute-prevent-cross-site-request-forgery/)的属性，能有效遏制CSRF，其核心原理控制从第三方页面发起的请求是否能带上cookie。比如：从b页面访问a页面，将不会带上属于a页面的设置了`SameSite`的cookie
 
 ## XSS
 

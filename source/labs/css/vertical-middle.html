@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>垂直居中测试</title>
+</head>
+<body>
+  <style>
+    .container {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      top: 0;
+      background-color: rgba(0, 0, 0, 0.2);
+      font-size: 0;
+      text-align: center;
+    }
+
+    .container::after {
+      display: inline-block;
+      content: '';
+      height: 100%;
+      vertical-align: middle;
+    }
+
+    .dialog {
+      display: inline-block;
+      font-size: 16px;
+      vertical-align: middle;
+    }
+  </style>
+  <div class="container">
+    天空
+    <div class="dialog">
+      something
+    </div>
+  </div>
+</body>
+</html>

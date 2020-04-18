@@ -14,7 +14,7 @@ timezone:
 
 # URL
 ## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'
-url: http://jinge.red
+url: http://tomwang1013.github.io
 root: /
 permalink: :title/
 permalink_defaults:
@@ -106,9 +106,9 @@ deploy:
 - type: git
   repo: git@github.com:tomwang1013/tomwang1013.github.io.git
   branch: master
-- type: ftpsync
-  host: 123.56.231.82
-  user: byu3639310001
-  pass: Mengxiang51#
-  remote: /htdocs
-  ignore: ["logreport"]
+# - type: ftpsync
+#   host: 123.56.231.82
+#   user: byu3639310001
+#   pass: Mengxiang51#
+#   remote: /htdocs
+#   ignore: ["logreport"]

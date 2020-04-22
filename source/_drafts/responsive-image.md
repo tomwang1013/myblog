@@ -1,4 +1,0 @@
----
-title: responsive-image
-tags:
----

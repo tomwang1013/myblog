@@ -5,6 +5,6 @@ db.json
 node_modules/
 public/
 .deploy*/
-themes/indigo
+# themes/indigo
 .idea/
 .vscode/

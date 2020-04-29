@@ -1,5 +1,5 @@
 ---
-title: 两个新API: requestIdleCallback和requestPostAnimationFrame的介绍
+title: 两个新API-requestIdleCallback和requestPostAnimationFrame的介绍
 categories:
   - programming
 date: 2020-04-29 14:22:50

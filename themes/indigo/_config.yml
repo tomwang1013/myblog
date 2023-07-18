@@ -12,16 +12,20 @@ menu:
     text: 主页
     url: /
   archives:
+    text: 归档
     url: /archives
   tags:
+    text: 标签
     url: /tags
   th-list:
-    text: Categories
+    text: 分类
     url: /categories
   github:
+    text: github
     url: https://github.com/tomwang1013
     target: _blank
   weibo:
+    text: 微博
     url: http://www.weibo.com/tomwanglnnxq
     target: _blank
   link:

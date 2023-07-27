@@ -38,7 +38,7 @@ When implementing fog in webgl, the key point is how to calculate the distance f
      void main() {
         gl_Position = u_mvpMatrix * a_position;
 
-        vec4 viewPos = u_viewMatrix.u_modelMatrix * a_position;
+        vec4 viewPos = u_viewMatrix * u_modelMatrix * a_position;
         v_dist = length(viewPos.xyz);
      }
      ```
@@ -52,7 +52,7 @@ When implementing fog in webgl, the key point is how to calculate the distance f
       ```glsl
       gl_Position = u_mvpMatrix * a_position;
       // z is negative in VC, the camera is looking in -z direction
-      vec4 viewPos = u_viewMatrix.u_modelMatrix * a_position;
+      vec4 viewPos = u_viewMatrix * u_modelMatrix * a_position;
       v_dist = -viewPos.z;
 
       // OR if you review the perspective project matrix, 

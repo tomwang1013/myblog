@@ -5,7 +5,8 @@ hexo.extend.helper.register('theme_version', () => version)
 const source = (path, cache, ext) => {
     if (cache) {
         const minFile = `${path}${ext}`
-        return hexo.theme.config.cdn ? `//unpkg.com/${name}@latest${minFile}` : `${minFile}?v=${version}`
+        if (ext === 'css') return `//unpkg.com/${name}@latest${minFile}`;
+        else return hexo.theme.config.cdn ? `//unpkg.com/${name}@latest${minFile}` : `${minFile}?v=${version}`
     } else {
         return path + ext
     }

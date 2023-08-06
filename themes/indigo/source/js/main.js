@@ -155,7 +155,7 @@
                     for (i = 0, len = titles.length; i < len; i++) {
                         if (top > offset(titles[i]).y - headerH - 5) {
                             var prevListEle = toc.querySelector('li.active');
-                            var currListEle = toc.querySelector('a[href="#' + titles[i].id + '"]').parentNode;
+                            var currListEle = toc.querySelector('a[href="#' + encodeURIComponent(titles[i].id) + '"]').parentNode;
 
                             handleTocActive(prevListEle, currListEle);
                         }

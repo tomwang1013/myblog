@@ -15,9 +15,9 @@ tags:
 
 ## 元素尺寸
 
-![element size](https://i.stack.imgur.com/5AAyW.png)
+![element size](../images/5AAyW.png)
 
-![element size 2](https://i.stack.imgur.com/Cl1IA.png)
+![element size 2](../images/Cl1IA.png)
 
 
 

@@ -129,7 +129,7 @@ p
 
 `resolve promise with normal value or another promise`状态示意图：
 
-![](../images/1538211823168.png)
+![状态示意图](../images/1538211823168.png)
 
 ### resolve q from `onRejected`
 
@@ -157,6 +157,17 @@ p
     // Handle error here
 });
 ```
+
+`Promise.prototype.then`的总结：
+
+One of the onFulfilled and onRejected handlers will be executed to handle the current promise's fulfillment or rejection. The call always happens asynchronously, even when the current promise is already settled. The behavior of the returned promise (call it p) depends on the handler's execution result, following a specific set of rules. If the handler function:
+
+- returns a value: p gets fulfilled with the returned value as its value.
+- doesn't return anything: p gets fulfilled with undefined as its value.
+- throws an error: p gets rejected with the thrown error as its value.
+- returns an already fulfilled promise: p gets fulfilled with that promise's value as its value.
+- returns an already rejected promise: p gets rejected with that promise's value as its value.
+- returns another pending promise: p is pending and becomes fulfilled/rejected with that promise's value as its value immediately after that promise becomes fulfilled/rejected.
 
 ### 错误随链接传递直到catch
 
@@ -272,6 +283,16 @@ Promise.prototype.finally = function (callback) {
     );
 };
 ```
+
+Notably, like JS finally clause:
+
+- no value or reason is passed in to the finally code (i.e. to callback).
+- Does not affect the result, i.e. the resulting promise is still fulfilled with value or rejected with reason, just like the original one, unless...
+- If the finally code blows up (i.e. if callback throws, or returns a rejected promise), it propagates that failure onward, instead of the original success or failure.
+
+#### 更新
+
+最新的Promise规范已经包含这个方法了：[Promise.finally](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/finally)
 
 ## async & await
 
@@ -414,3 +435,5 @@ http://exploringjs.com/es6/ch_promises.html
 http://exploringjs.com/es2016-es2017/ch_async-functions.html
 
 https://jakearchibald.com/2017/await-vs-return-vs-return-await/
+
+https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/then

@@ -37,3 +37,7 @@ a.catch(() => b).catch(() => c).catch(() => d)
 ```
 
 如果最后一个catch被执行，说明前面所有的catch都被执行了，而前面的catch函数都是返回下一个promise，这说明每个promise都是reject状态
+
+## 更新
+
+最新的Promise规范已经包含这个方法了: [Promise.any](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/any)

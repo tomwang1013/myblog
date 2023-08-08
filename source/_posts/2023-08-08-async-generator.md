@@ -65,7 +65,7 @@ interface IteratorResult<T> {
 }
 ```
 
-We call is **async iteration**. `async iterable` can be used in `for...wait...of`:
+We call it **async iteratle & iterator**. `async iterable` can be used in `for...wait...of`:
 
 ```javascript
 const arr = [Promise.resolve('a'), Promise.resolve('b')];
@@ -160,4 +160,44 @@ async function check() {
 }
 
 check();
+```
+
+Another version with just async function:
+
+```typescript
+export type RequestToMake = () => Promise<void>;
+
+/**
+ * Given an array of requestsToMake and a limit on the number of max parallel requests
+ * queue up those requests and start firing them
+ * - inspired by Rafael Xavier's approach here: https://stackoverflow.com/a/48007240/761388
+ *
+ * @param requestsToMake
+ * @param maxParallelRequests the maximum number of requests to make - defaults to 6
+ */
+async function throttleRequests(
+    requestsToMake: RequestToMake[],
+    maxParallelRequests = 6
+) {
+    // queue up simultaneous calls
+    const queue: Promise<void>[] = [];
+    for (let requestToMake of requestsToMake) {
+        // fire the async function, add its promise to the queue,
+        // and remove it from queue when complete
+        const promise = requestToMake().then((res) => {
+            queue.splice(queue.indexOf(promise), 1);
+            return res;
+        });
+        queue.push(promise);
+
+        // if the number of queued requests matches our limit then
+        // wait for one to finish before enqueueing more
+        if (queue.length >= maxParallelRequests) {
+            await Promise.race(queue);
+        }
+    }
+    // wait for the rest of the calls to finish
+    await Promise.all(queue);
+}
+
 ```
